@@ -1,8 +1,22 @@
 import Stripe from "stripe";
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-02-24.acacia",
-  typescript: true,
+// Lazy init – prevents "apiKey not provided" crash during Next.js build
+let _stripe: Stripe | undefined;
+
+function getInstance(): Stripe {
+  if (!_stripe) {
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      apiVersion: "2025-02-24.acacia",
+      typescript: true,
+    });
+  }
+  return _stripe;
+}
+
+export const stripe = new Proxy({} as Stripe, {
+  get(_: Stripe, prop: string | symbol) {
+    return Reflect.get(getInstance(), prop);
+  },
 });
 
 export const PLANS = {
