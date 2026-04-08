@@ -48,7 +48,10 @@ export default function AdminLessonPage() {
     setLessons(l);
   }
 
-  useEffect(() => { loadData(); }, [courseId]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadData();
+  }, [courseId]);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

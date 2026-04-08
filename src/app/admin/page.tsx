@@ -1,7 +1,6 @@
 import { getAdminStats } from "@/actions/admin";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { formatDate } from "@/lib/utils";
 import { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Admin – Přehled" };

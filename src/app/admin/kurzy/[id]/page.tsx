@@ -3,7 +3,6 @@
 import { useEffect, useState, useTransition } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { updateCourse, deleteCourse } from "@/actions/courses";
-import { slugify } from "@/lib/utils";
 import Link from "next/link";
 
 interface Course {

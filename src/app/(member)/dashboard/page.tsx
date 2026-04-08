@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { formatDate, formatPrice } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import { isActiveMembership } from "@/lib/stripe";
 import ManageSubscriptionButton from "@/components/member/ManageSubscriptionButton";
 

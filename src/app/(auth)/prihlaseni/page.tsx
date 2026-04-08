@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useState, useTransition } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { loginWithCredentials, loginWithGoogle } from "@/actions/auth";
 

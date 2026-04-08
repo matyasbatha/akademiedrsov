@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Metadata } from "next";
-import AdminCourseActions from "@/components/admin/AdminCourseActions";
 
 export const metadata: Metadata = { title: "Admin – Kurzy" };
 

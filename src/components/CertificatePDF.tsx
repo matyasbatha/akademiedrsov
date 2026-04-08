@@ -20,7 +20,6 @@ Font.register({
   ],
 });
 
-const NAVY       = "#1a2d5a";
 const NAVY_DARK  = "#112044";
 const NAVY_MID   = "#243d77";
 const GOLD       = "#c9a84c";

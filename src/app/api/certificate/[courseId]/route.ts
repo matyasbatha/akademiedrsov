@@ -44,12 +44,12 @@ export async function GET(_req: NextRequest, { params }: Params) {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const element = React.createElement(CertificatePDF, {
+  const element: any = React.createElement(CertificatePDF, {
     recipientName,
     courseName: course.title,
     issuerName: "Matyáš Baťha, Dis.",
     date,
-  }) as any;
+  });
 
   const buffer = await renderToBuffer(element);
 
@@ -57,7 +57,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const filename = `Certifikát_${recipientName}_${safeName}.pdf`
     .replace(/\s+/g, "_");
 
-  return new NextResponse(buffer, {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
