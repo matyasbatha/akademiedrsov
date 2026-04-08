@@ -43,14 +43,15 @@ export async function GET(_req: NextRequest, { params }: Params) {
     year: "numeric",
   });
 
-  const buffer = await renderToBuffer(
-    React.createElement(CertificatePDF, {
-      recipientName,
-      courseName: course.title,
-      issuerName: "Matyáš Baťha, Dis.",
-      date,
-    })
-  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const element = React.createElement(CertificatePDF, {
+    recipientName,
+    courseName: course.title,
+    issuerName: "Matyáš Baťha, Dis.",
+    date,
+  }) as any;
+
+  const buffer = await renderToBuffer(element);
 
   const safeName = course.title.replace(/[^a-z0-9áčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s]/gi, "").trim();
   const filename = `Certifikát_${recipientName}_${safeName}.pdf`
