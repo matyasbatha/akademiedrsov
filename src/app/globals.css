@@ -1,11 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --navy: #1a2d5a;
+  --navy-dark: #112044;
+  --navy-light: #243d77;
+  --gold: #c9a84c;
+  --gold-light: #e4c46e;
+  --gold-dark: #a8893a;
 }
 
 @theme inline {
+  --color-navy: var(--navy);
+  --color-navy-dark: var(--navy-dark);
+  --color-navy-light: var(--navy-light);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-gold-dark: var(--gold-dark);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -14,13 +24,24 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f1a33;
+    --foreground: #e8eaf0;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background, #ffffff);
+  color: var(--foreground, #1a1a2e);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.prose-drsov {
+  color: #374151;
+  line-height: 1.75;
+}
+
+.prose-drsov h1, .prose-drsov h2, .prose-drsov h3 {
+  color: var(--navy);
+  font-weight: 700;
 }
