@@ -15,7 +15,6 @@ export default function MemberMobileNav({
   const [open, setOpen] = useState(false);
 
   const links = [
-    { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
     { href: "/kurzy", label: "Kurzy", icon: "book" },
     { href: "/ucet", label: "Můj účet", icon: "user" },
   ];
@@ -24,7 +23,7 @@ export default function MemberMobileNav({
     <div className="md:hidden">
       {/* Horní lišta */}
       <div className="fixed top-0 inset-x-0 z-50 bg-navy border-b border-white/10 px-4 h-14 flex items-center justify-between">
-        <Link href="/dashboard" className="font-bold text-white text-sm" onClick={() => setOpen(false)}>
+        <Link href="/kurzy" className="font-bold text-white text-sm" onClick={() => setOpen(false)}>
           Akademie <span className="text-gold">Drsov</span>
         </Link>
         <button onClick={() => setOpen((v) => !v)} className="text-white p-2 -mr-2" aria-label="Menu">

@@ -50,7 +50,7 @@ export async function register(formData: FormData) {
 export async function loginWithCredentials(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const callbackUrl = (formData.get("callbackUrl") as string) || "/dashboard";
+  const callbackUrl = (formData.get("callbackUrl") as string) || "/kurzy";
 
   try {
     await signIn("credentials", {
@@ -72,7 +72,7 @@ export async function loginWithCredentials(formData: FormData) {
 }
 
 export async function loginWithGoogle() {
-  await signIn("google", { redirectTo: "/dashboard" });
+  await signIn("google", { redirectTo: "/kurzy" });
 }
 
 export async function logout() {

@@ -12,7 +12,7 @@ const publicRoutes = [
   "/api/stripe/webhook",
 ];
 
-const memberRoutes = ["/dashboard", "/kurzy", "/lekce", "/ucet"];
+const memberRoutes = ["/kurzy", "/lekce", "/ucet"];
 const adminRoutes = ["/admin"];
 
 export default auth((req) => {
@@ -32,7 +32,7 @@ export default auth((req) => {
       return NextResponse.redirect(new URL("/prihlaseni", req.url));
     }
     if (session.user.role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.redirect(new URL("/kurzy", req.url));
     }
     return NextResponse.next();
   }

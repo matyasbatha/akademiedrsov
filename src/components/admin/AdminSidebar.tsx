@@ -29,11 +29,11 @@ function NavLinks({ onClick }: { onClick?: () => void }) {
         <span className="text-xs text-white/20 uppercase tracking-widest px-3">Web</span>
       </div>
       <Link
-        href="/dashboard"
+        href="/kurzy"
         onClick={onClick}
         className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white transition-all text-sm"
       >
-        <Icon name="dashboard" className="w-5 h-5" /> Přejít na web
+        <Icon name="book" className="w-5 h-5" /> Přejít na web
       </Link>
     </>
   );

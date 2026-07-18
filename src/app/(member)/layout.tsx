@@ -17,7 +17,7 @@ export default async function MemberLayout({ children }: { children: React.React
       {/* Sidebar */}
       <aside className="hidden md:flex w-64 bg-navy flex-col fixed inset-y-0">
         <div className="p-6 border-b border-white/10">
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link href="/kurzy" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gold rounded-lg flex items-center justify-center">
               <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
@@ -31,7 +31,6 @@ export default async function MemberLayout({ children }: { children: React.React
 
         <nav className="flex-1 p-4 space-y-1">
           {[
-            { href: "/dashboard", icon: "dashboard", label: "Dashboard" },
             { href: "/kurzy", icon: "book", label: "Kurzy" },
             { href: "/ucet", icon: "user", label: "Můj účet" },
           ].map((item) => (

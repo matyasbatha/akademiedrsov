@@ -6,7 +6,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const session = await auth();
 
   if (!session?.user || session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect("/kurzy");
   }
 
   return (

@@ -2,9 +2,10 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { hasCourseAccess } from "@/lib/access";
+import { hasCourseAccess, getActiveAccessCourseIds } from "@/lib/access";
 import { Metadata } from "next";
 import VideoPlayer from "@/components/member/VideoPlayer";
+import CourseSaleCard from "@/components/member/CourseSaleCard";
 import LessonListCollapsible from "@/components/member/LessonListCollapsible";
 
 interface Props {
@@ -56,34 +57,52 @@ export default async function LessonPage({ params }: Props) {
     orderBy: { createdAt: "asc" },
   });
 
+  // Po dokončení nabídneme další kurzy k zakoupení (které student nevlastní)
+  let recommendedCourses: {
+    id: string;
+    slug: string;
+    title: string;
+    coverImage: string | null;
+    price: number;
+    originalPrice: number | null;
+    isComingSoon: boolean;
+  }[] = [];
+  if (isLastLesson) {
+    const ownedIds = await getActiveAccessCourseIds(session.user.id);
+    const others = await prisma.course.findMany({
+      where: { isPublished: true, isFree: false, id: { not: lesson.courseId } },
+      orderBy: { order: "asc" },
+    });
+    recommendedCourses = others.filter((c) => !ownedIds.has(c.id)).slice(0, 6);
+  }
+
+  // Hlavička (breadcrumb + název + popis) – použije se 2× (mobil nad videem, desktop vedle videa)
+  const headerBlock = (
+    <>
+      <nav className="flex items-center gap-1.5 text-xs text-gray-400 flex-wrap">
+        <Link href="/kurzy" className="hover:text-navy transition-colors">Kurzy</Link>
+        <span>/</span>
+        <Link href={`/kurzy/${lesson.course.slug}`} className="hover:text-navy transition-colors">{lesson.course.title}</Link>
+        <span>/</span>
+        <span className="text-gray-600 font-medium truncate max-w-[160px]">{lesson.title}</span>
+      </nav>
+      <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm w-full overflow-hidden">
+        <p className="text-xs font-semibold text-gold uppercase tracking-wide mb-1">
+          Lekce {currentIndex + 1} z {allLessons.length}
+        </p>
+        <h1 className="text-xl md:text-2xl font-bold text-navy leading-tight mb-2 [overflow-wrap:anywhere]">{lesson.title}</h1>
+        {lesson.description && (
+          <p className="text-gray-600 text-sm leading-relaxed [overflow-wrap:anywhere]">{lesson.description}</p>
+        )}
+      </div>
+    </>
+  );
+
   return (
-    /*
-     * Na mobilu: video jde přes celou šířku (záporné marginy negují padding layoutu).
-     * Na desktopu (lg+): flex layout – video zabírá výšku viewportu (šířka auto z 9:16),
-     * vpravo se skládá obsah.
-     * overflow-x-hidden zabraňuje horizontálnímu scrollu na mobilu.
-     */
     <div className="overflow-x-hidden">
 
-      {/* ─── Hlavička: název + popis NAD videem ────────────── */}
-      <div className="mb-5 space-y-3">
-        <nav className="flex items-center gap-1.5 text-xs text-gray-400 flex-wrap">
-          <Link href="/kurzy" className="hover:text-navy transition-colors">Kurzy</Link>
-          <span>/</span>
-          <Link href={`/kurzy/${lesson.course.slug}`} className="hover:text-navy transition-colors">{lesson.course.title}</Link>
-          <span>/</span>
-          <span className="text-gray-600 font-medium truncate max-w-[160px]">{lesson.title}</span>
-        </nav>
-        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm w-full overflow-hidden">
-          <p className="text-xs font-semibold text-gold uppercase tracking-wide mb-1">
-            Lekce {currentIndex + 1} z {allLessons.length}
-          </p>
-          <h1 className="text-xl md:text-2xl font-bold text-navy leading-tight mb-2 [overflow-wrap:anywhere]">{lesson.title}</h1>
-          {lesson.description && (
-            <p className="text-gray-600 text-sm leading-relaxed [overflow-wrap:anywhere]">{lesson.description}</p>
-          )}
-        </div>
-      </div>
+      {/* Hlavička nad videem – pouze mobil */}
+      <div className="lg:hidden mb-5 space-y-3">{headerBlock}</div>
 
       {/* ─── Video + obsah ─────────────────────────────────── */}
       <div className="lg:flex lg:gap-8 lg:items-start">
@@ -160,6 +179,9 @@ export default async function LessonPage({ params }: Props) {
 
       {/* ─── Obsah sloupec ─────────────────────────────────── */}
       <div className="min-w-0 w-full flex-1 space-y-4 pt-5 lg:pt-0 lg:max-w-lg">
+
+        {/* Hlavička vedle videa – pouze desktop */}
+        <div className="hidden lg:block space-y-3">{headerBlock}</div>
 
         {/* Rychlé pokračování na další lekci – pouze mobil (desktop má navigaci pod videem) */}
         {canAccess && nextLesson && (
@@ -290,6 +312,21 @@ export default async function LessonPage({ params }: Props) {
         )}
       </div>
       </div>
+
+      {/* Další kurzy k zakoupení – po poslední lekci */}
+      {isLastLesson && recommendedCourses.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-xl font-bold text-navy mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-gold" />
+            Další kurzy k zakoupení
+          </h2>
+          <div className="flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5">
+            {recommendedCourses.map((c) => (
+              <CourseSaleCard key={c.id} course={c} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

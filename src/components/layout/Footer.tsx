@@ -42,7 +42,7 @@ export default function Footer() {
                 { href: "/kurzy", label: "Kurzy" },
                 { href: "/prihlaseni", label: "Přihlásit se" },
                 { href: "/registrace", label: "Registrovat se" },
-                { href: "/dashboard", label: "Dashboard" },
+                { href: "/ucet", label: "Můj účet" },
               ].map((link) => (
                 <li key={link.href}>
                   <Link

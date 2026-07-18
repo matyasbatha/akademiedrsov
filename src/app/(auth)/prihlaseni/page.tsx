@@ -7,7 +7,7 @@ import { loginWithCredentials, loginWithGoogle } from "@/actions/auth";
 
 function LoginForm() {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
+  const callbackUrl = searchParams.get("callbackUrl") ?? "/kurzy";
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 

@@ -33,12 +33,6 @@ export default function Header() {
             </Link>
             {session?.user ? (
               <>
-                <Link
-                  href="/dashboard"
-                  className="text-gray-600 hover:text-navy font-medium transition-colors"
-                >
-                  Dashboard
-                </Link>
                 {session.user.role === "ADMIN" && (
                   <Link
                     href="/admin"
@@ -119,9 +113,6 @@ export default function Header() {
             </Link>
             {session?.user ? (
               <>
-                <Link href="/dashboard" className="block py-2 text-gray-600 font-medium" onClick={() => setMenuOpen(false)}>
-                  Dashboard
-                </Link>
                 <Link href="/ucet" className="block py-2 text-gray-600 font-medium" onClick={() => setMenuOpen(false)}>
                   Můj účet
                 </Link>
