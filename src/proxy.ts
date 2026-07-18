@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 const publicRoutes = [
   "/",
   "/chyby-kosmeticky",
+  "/nabidka-kurzu",
   "/prihlaseni",
   "/registrace",
   "/api/auth",
