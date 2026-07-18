@@ -33,6 +33,7 @@ export default function NovyKurzPage() {
           price: Number(form.get("price")) || 0,
           originalPrice: Number(form.get("originalPrice")) || null,
           accessMonths: Number(form.get("accessMonths")) || 6,
+          isComingSoon: form.getAll("isComingSoon").includes("true"),
           isPublished: form.getAll("isPublished").includes("true"),
           isFree: form.getAll("isFree").includes("true"),
           order: Number(form.get("order")) || 0,
@@ -101,7 +102,7 @@ export default function NovyKurzPage() {
           <CoverImageInput />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Cena (Kč) *</label>
             <input
@@ -125,7 +126,7 @@ export default function NovyKurzPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Délka přístupu (měsíce)</label>
             <input
@@ -169,6 +170,19 @@ export default function NovyKurzPage() {
             <span className="text-sm font-medium text-gray-700">Zdarma (zdarma pro všechny)</span>
           </label>
         </div>
+
+        <label className="flex items-center gap-2 cursor-pointer bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+          <input type="hidden" name="isComingSoon" value="false" />
+          <input
+            type="checkbox"
+            name="isComingSoon"
+            value="true"
+            className="w-4 h-4 rounded accent-amber-500"
+          />
+          <span className="text-sm font-medium text-amber-800">
+            Připravujeme – předprodej se slevou 50 %
+          </span>
+        </label>
 
         <div className="flex items-center gap-3 pt-2">
           <button

@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { formatDate, formatPrice } from "@/lib/utils";
+import { formatDate, formatPrice, coursePricing } from "@/lib/utils";
 import { getMyCourses } from "@/lib/access";
 import BuyCourseButton from "@/components/member/BuyCourseButton";
 import Icon from "@/components/ui/Icon";
@@ -129,13 +129,13 @@ export default async function DashboardPage() {
                     <h3 className="font-bold text-gray-900 mb-2 line-clamp-2 hover:text-navy transition-colors">{course.title}</h3>
                   </Link>
                   <div className="mt-auto flex items-center justify-between gap-2">
-                    <span className="font-bold text-navy">{formatPrice(course.price)}</span>
+                    <span className="font-bold text-navy">{formatPrice(coursePricing(course).effective)}</span>
                     <BuyCourseButton
                       courseId={course.id}
                       courseSlug={course.slug}
                       className="bg-gold text-navy px-4 py-2 rounded-xl font-bold text-sm hover:bg-gold-dark"
                     >
-                      Koupit
+                      {course.isComingSoon ? "Předprodej" : "Koupit"}
                     </BuyCourseButton>
                   </div>
                 </div>

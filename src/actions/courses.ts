@@ -17,6 +17,7 @@ const CourseSchema = z.object({
   price: z.number().min(0).default(0),
   originalPrice: z.number().min(0).nullable().optional(),
   accessMonths: z.number().min(1).default(6),
+  isComingSoon: z.boolean().default(false),
   isPublished: z.boolean().default(false),
   isFree: z.boolean().default(false),
   order: z.number().default(0),

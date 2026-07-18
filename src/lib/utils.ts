@@ -22,6 +22,19 @@ export function formatPrice(amount: number): string {
   }).format(amount);
 }
 
+// Cena kurzu s ohledem na předprodej („Připravujeme" = −50 %).
+export function coursePricing(course: {
+  price: number;
+  originalPrice?: number | null;
+  isComingSoon?: boolean;
+}) {
+  const isPresale = !!course.isComingSoon;
+  const effective = isPresale ? Math.round(course.price / 2) : course.price;
+  // Cena, kterou proškrtneme: v předprodeji plná cena kurzu, jinak původní cena
+  const strike = isPresale ? course.price : course.originalPrice ?? null;
+  return { isPresale, effective, strike, full: course.price };
+}
+
 export function slugify(text: string): string {
   return text
     .normalize("NFD")

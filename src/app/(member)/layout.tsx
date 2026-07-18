@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { logout } from "@/actions/auth";
 import Icon from "@/components/ui/Icon";
+import MemberMobileNav from "@/components/member/MemberMobileNav";
 
 export default async function MemberLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -88,19 +89,11 @@ export default async function MemberLayout({ children }: { children: React.React
       </aside>
 
       {/* Mobile nav */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-navy border-b border-white/10 px-4 py-3 flex items-center justify-between">
-        <Link href="/dashboard" className="font-bold text-white text-sm">
-          Akademie <span className="text-gold">Drsov</span>
-        </Link>
-        <div className="flex gap-3">
-          <Link href="/dashboard" className="text-white/70 text-sm">Dashboard</Link>
-          <Link href="/kurzy" className="text-white/70 text-sm">Kurzy</Link>
-        </div>
-      </div>
+      <MemberMobileNav email={session.user.email} isAdmin={session.user.role === "ADMIN"} />
 
       {/* Main content */}
       <main className="flex-1 md:ml-64 pt-14 md:pt-0">
-        <div className="p-6 md:p-8">{children}</div>
+        <div className="p-4 sm:p-6 md:p-8">{children}</div>
       </main>
     </div>
   );

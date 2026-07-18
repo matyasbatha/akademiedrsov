@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, coursePricing } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Nabídka kurzů",
@@ -160,6 +160,9 @@ export default async function NabidkaKurzuPage() {
                   {course.isFree && (
                     <div className="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">ZDARMA</div>
                   )}
+                  {!course.isFree && course.isComingSoon && (
+                    <div className="absolute top-2 left-2 bg-amber-400 text-navy text-xs font-bold px-2.5 py-1 rounded-full">PŘIPRAVUJEME −50 %</div>
+                  )}
                 </div>
                 <div className="p-5 flex flex-col flex-1">
                   <h3 className="font-bold text-navy text-lg mb-1.5 line-clamp-2">{course.title}</h3>
@@ -172,10 +175,13 @@ export default async function NabidkaKurzuPage() {
                         <span className="text-lg font-bold text-green-600">Zdarma</span>
                       ) : (
                         <>
-                          <span className="text-lg font-bold text-navy">{formatPrice(course.price)}</span>
-                          {course.originalPrice && course.originalPrice > course.price && (
-                            <span className="text-sm text-gray-400 line-through">{formatPrice(course.originalPrice)}</span>
-                          )}
+                          <span className="text-lg font-bold text-navy">{formatPrice(coursePricing(course).effective)}</span>
+                          {(() => {
+                            const p = coursePricing(course);
+                            return p.strike && p.strike > p.effective ? (
+                              <span className="text-sm text-gray-400 line-through">{formatPrice(p.strike)}</span>
+                            ) : null;
+                          })()}
                         </>
                       )}
                     </div>

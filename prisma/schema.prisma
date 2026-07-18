@@ -113,6 +113,8 @@ model Course {
   currency      String   @default("czk")
   // Délka přístupu v měsících od data nákupu (admin může měnit)
   accessMonths  Int      @default(6)
+  // "Připravujeme" – kurz jde koupit v předprodeji se slevou 50 %
+  isComingSoon  Boolean  @default(false)
   isPublished Boolean  @default(false)
   isFree      Boolean  @default(false)
   order       Int      @default(0)

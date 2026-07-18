@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { Metadata } from "next";
 import { hasCourseAccess } from "@/lib/access";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, coursePricing } from "@/lib/utils";
 import BuyCourseButton from "@/components/member/BuyCourseButton";
 
 interface Props {
@@ -38,6 +38,7 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
   if (!course) notFound();
 
   const canAccess = await hasCourseAccess(session.user.id, course, session.user.role);
+  const pricing = coursePricing(course);
 
   // canAccess = false znamená, že uživatel vidí kurz, ale lekce jsou zamčené
 
@@ -107,16 +108,28 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
         <div className="bg-gradient-to-r from-navy to-navy-light rounded-2xl p-6 mb-6 text-white">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <p className="font-bold text-lg mb-1">Získejte přístup k tomuto kurzu</p>
+              {course.isComingSoon && (
+                <span className="inline-block bg-amber-400 text-navy text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide mb-2">
+                  Připravujeme · předprodej −50 %
+                </span>
+              )}
+              <p className="font-bold text-lg mb-1">
+                {course.isComingSoon ? "Kupte kurz v předprodeji" : "Získejte přístup k tomuto kurzu"}
+              </p>
               <p className="text-white/70 text-sm">
-                Jednorázová platba · {course.accessMonths} měsíců přístup · certifikát po dokončení
+                {course.isComingSoon
+                  ? `Přístup získáte hned po spuštění · ${course.accessMonths} měsíců · certifikát`
+                  : `Jednorázová platba · ${course.accessMonths} měsíců přístup · certifikát po dokončení`}
               </p>
               <div className="flex items-baseline gap-3 mt-3">
-                <span className="text-3xl font-bold text-gold">{formatPrice(course.price)}</span>
-                {course.originalPrice && course.originalPrice > course.price && (
+                <span className="text-3xl font-bold text-gold">{formatPrice(pricing.effective)}</span>
+                {pricing.strike && pricing.strike > pricing.effective && (
                   <span className="text-white/50 line-through text-lg">
-                    {formatPrice(course.originalPrice)}
+                    {formatPrice(pricing.strike)}
                   </span>
+                )}
+                {pricing.isPresale && (
+                  <span className="bg-amber-400 text-navy text-xs font-bold px-2 py-1 rounded-full">−50 %</span>
                 )}
               </div>
             </div>
@@ -125,7 +138,7 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
               courseSlug={course.slug}
               className="bg-gold text-navy px-8 py-4 rounded-xl font-bold text-lg hover:bg-gold-dark whitespace-nowrap"
             >
-              Koupit kurz
+              {course.isComingSoon ? "Koupit v předprodeji" : "Koupit kurz"}
             </BuyCourseButton>
           </div>
         </div>

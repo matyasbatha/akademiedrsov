@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, coursePricing } from "@/lib/utils";
 import { courseMedia } from "@/data/courseMedia";
 
 interface Props {
@@ -47,6 +47,7 @@ export default async function VerejnyKurzPage({ params }: Props) {
   if (!course) notFound();
 
   const isFree = course.isFree || course.price <= 0;
+  const pricing = coursePricing(course);
   const media = courseMedia[course.slug] ?? {};
 
   return (
@@ -62,6 +63,11 @@ export default async function VerejnyKurzPage({ params }: Props) {
             <Link href="/nabidka-kurzu" className="text-white/60 hover:text-white text-sm mb-4 inline-block">
               ← Zpět na nabídku kurzů
             </Link>
+            {course.isComingSoon && (
+              <span className="inline-block bg-amber-400 text-navy text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4">
+                Připravujeme · předprodej −50 %
+              </span>
+            )}
             <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight mb-5">{course.title}</h1>
             {course.description && (
               <p className="text-lg text-white/85 mb-6 leading-relaxed">{course.description}</p>
@@ -78,9 +84,12 @@ export default async function VerejnyKurzPage({ params }: Props) {
                 <span className="text-3xl font-bold text-green-400">Zdarma</span>
               ) : (
                 <>
-                  <span className="text-3xl font-bold text-gold">{formatPrice(course.price)}</span>
-                  {course.originalPrice && course.originalPrice > course.price && (
-                    <span className="text-white/50 line-through text-lg">{formatPrice(course.originalPrice)}</span>
+                  <span className="text-3xl font-bold text-gold">{formatPrice(pricing.effective)}</span>
+                  {pricing.strike && pricing.strike > pricing.effective && (
+                    <span className="text-white/50 line-through text-lg">{formatPrice(pricing.strike)}</span>
+                  )}
+                  {pricing.isPresale && (
+                    <span className="bg-amber-400 text-navy text-xs font-bold px-2 py-1 rounded-full">−50 %</span>
                   )}
                 </>
               )}
@@ -174,13 +183,22 @@ export default async function VerejnyKurzPage({ params }: Props) {
       <section className="py-16 bg-gray-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-2xl border-2 border-gold/40 shadow-lg p-8 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-navy mb-3">Jak kurz odemknout</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-navy mb-3">
+              {course.isComingSoon ? "Předprodej se slevou 50 %" : "Jak kurz odemknout"}
+            </h2>
 
             {isFree ? (
               <p className="text-gray-600 leading-relaxed mb-6">
                 Tento kurz je <strong className="text-green-600">zdarma</strong>. Stačí se
                 bezplatně zaregistrovat do členské sekce a získáte okamžitý přístup ke všem
                 lekcím, materiálům i certifikátu.
+              </p>
+            ) : course.isComingSoon ? (
+              <p className="text-gray-600 leading-relaxed mb-6">
+                Tento kurz <strong className="text-amber-600">právě připravujeme</strong>. Teď ho
+                můžete koupit v <strong className="text-navy">předprodeji se slevou 50 % za{" "}
+                {formatPrice(pricing.effective)}</strong> místo {formatPrice(pricing.full)}. Přístup
+                získáte hned, jakmile kurz spustíme. Nejprve se zdarma zaregistrujte.
               </p>
             ) : (
               <p className="text-gray-600 leading-relaxed mb-6">
@@ -195,7 +213,11 @@ export default async function VerejnyKurzPage({ params }: Props) {
               href={`/registrace?callbackUrl=/kurzy/${course.slug}`}
               className="inline-flex items-center justify-center gap-2 bg-gold text-navy px-8 py-4 rounded-xl font-bold text-lg hover:bg-gold-dark transition-all shadow-lg"
             >
-              {isFree ? "Zaregistrovat se a získat zdarma" : "Zaregistrovat se a pokračovat"}
+              {isFree
+                ? "Zaregistrovat se a získat zdarma"
+                : course.isComingSoon
+                ? "Koupit v předprodeji −50 %"
+                : "Zaregistrovat se a pokračovat"}
             </Link>
 
             <p className="text-gray-500 text-sm mt-4">

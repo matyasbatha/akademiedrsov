@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, coursePricing } from "@/lib/utils";
 
 const benefits = [
   {
@@ -123,7 +123,7 @@ export default async function HomePage() {
                   href={`/kurz/${course.slug}`}
                   className="group flex flex-col rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-gold/40 hover:shadow-xl transition-all"
                 >
-                  <div className="aspect-[16/10] overflow-hidden bg-navy/10">
+                  <div className="aspect-[16/10] overflow-hidden bg-navy/10 relative">
                     {course.coverImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={course.coverImage} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -133,6 +133,9 @@ export default async function HomePage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
+                    )}
+                    {!course.isFree && course.isComingSoon && (
+                      <div className="absolute top-2 left-2 bg-amber-400 text-navy text-xs font-bold px-2.5 py-1 rounded-full">PŘIPRAVUJEME −50 %</div>
                     )}
                   </div>
                   <div className="flex flex-col flex-1 p-5">
@@ -148,10 +151,13 @@ export default async function HomePage() {
                           <span className="text-xl font-bold text-green-600">Zdarma</span>
                         ) : (
                           <>
-                            <span className="text-xl font-bold text-navy">{formatPrice(course.price)}</span>
-                            {course.originalPrice && course.originalPrice > course.price && (
-                              <span className="text-sm text-gray-400 line-through">{formatPrice(course.originalPrice)}</span>
-                            )}
+                            <span className="text-xl font-bold text-navy">{formatPrice(coursePricing(course).effective)}</span>
+                            {(() => {
+                              const p = coursePricing(course);
+                              return p.strike && p.strike > p.effective ? (
+                                <span className="text-sm text-gray-400 line-through">{formatPrice(p.strike)}</span>
+                              ) : null;
+                            })()}
                           </>
                         )}
                       </div>

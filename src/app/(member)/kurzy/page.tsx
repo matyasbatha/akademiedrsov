@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Metadata } from "next";
 import { getActiveAccessCourseIds } from "@/lib/access";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, coursePricing } from "@/lib/utils";
 import BuyCourseButton from "@/components/member/BuyCourseButton";
 import Icon from "@/components/ui/Icon";
 
@@ -89,6 +89,7 @@ type CardCourse = {
   description: string | null;
   coverImage: string | null;
   isFree: boolean;
+  isComingSoon: boolean;
   price: number;
   originalPrice: number | null;
   _count: { lessons: number };
@@ -128,6 +129,11 @@ function CourseCard({ course, owned }: { course: CardCourse; owned: boolean }) {
               ZAKOUPENO
             </div>
           )}
+          {!owned && course.isComingSoon && !course.isFree && (
+            <div className="absolute top-2 left-2 bg-amber-400 text-navy text-xs font-bold px-2.5 py-1 rounded-full">
+              PŘIPRAVUJEME −50 %
+            </div>
+          )}
         </div>
       </Link>
 
@@ -158,19 +164,20 @@ function CourseCard({ course, owned }: { course: CardCourse; owned: boolean }) {
           ) : (
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-baseline gap-2">
-                <span className="text-lg font-bold text-navy">{formatPrice(course.price)}</span>
-                {course.originalPrice && course.originalPrice > course.price && (
-                  <span className="text-sm text-gray-400 line-through">
-                    {formatPrice(course.originalPrice)}
-                  </span>
-                )}
+                <span className="text-lg font-bold text-navy">{formatPrice(coursePricing(course).effective)}</span>
+                {(() => {
+                  const p = coursePricing(course);
+                  return p.strike && p.strike > p.effective ? (
+                    <span className="text-sm text-gray-400 line-through">{formatPrice(p.strike)}</span>
+                  ) : null;
+                })()}
               </div>
               <BuyCourseButton
                 courseId={course.id}
                 courseSlug={course.slug}
                 className="bg-gold text-navy px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-gold-dark whitespace-nowrap"
               >
-                Koupit
+                {course.isComingSoon ? "Předprodej" : "Koupit"}
               </BuyCourseButton>
             </div>
           )}

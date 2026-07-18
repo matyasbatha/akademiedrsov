@@ -40,6 +40,9 @@ export async function POST(req: NextRequest) {
       ? [course.coverImage]
       : undefined;
 
+  // Předprodej „Připravujeme" = sleva 50 %
+  const unitPriceCzk = course.isComingSoon ? Math.round(course.price / 2) : course.price;
+
   const checkoutSession = await stripe.checkout.sessions.create({
     mode: "payment",
     customer_email: session.user.email ?? undefined,
@@ -48,9 +51,9 @@ export async function POST(req: NextRequest) {
         quantity: 1,
         price_data: {
           currency: course.currency.toLowerCase(),
-          unit_amount: course.price * 100, // Kč → haléře
+          unit_amount: unitPriceCzk * 100, // Kč → haléře
           product_data: {
-            name: course.title,
+            name: course.isComingSoon ? `${course.title} (předprodej −50 %)` : course.title,
             ...(course.description ? { description: course.description.slice(0, 300) } : {}),
             ...(images ? { images } : {}),
           },
