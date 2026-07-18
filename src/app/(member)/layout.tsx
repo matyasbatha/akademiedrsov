@@ -92,7 +92,7 @@ export default async function MemberLayout({ children }: { children: React.React
       <MemberMobileNav email={session.user.email} isAdmin={session.user.role === "ADMIN"} />
 
       {/* Main content */}
-      <main className="flex-1 md:ml-64 pt-14 md:pt-0">
+      <main className="flex-1 min-w-0 md:ml-64 pt-14 md:pt-0">
         <div className="p-4 sm:p-6 md:p-8">{children}</div>
       </main>
     </div>
