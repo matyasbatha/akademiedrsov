@@ -2,6 +2,7 @@ import { getAdminStats } from "@/actions/admin";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Metadata } from "next";
+import Icon from "@/components/ui/Icon";
 
 export const metadata: Metadata = { title: "Admin – Přehled" };
 
@@ -14,10 +15,10 @@ export default async function AdminPage() {
   });
 
   const statCards = [
-    { label: "Celkem uživatelů", value: stats.totalUsers, color: "bg-blue-50 text-blue-700", icon: "👤" },
-    { label: "Aktivní přístupy", value: stats.activeAccesses, color: "bg-green-50 text-green-700", icon: "✅" },
-    { label: "Kurzy", value: stats.totalCourses, color: "bg-purple-50 text-purple-700", icon: "📚" },
-    { label: "Lekce", value: stats.totalLessons, color: "bg-amber-50 text-amber-700", icon: "▶" },
+    { label: "Celkem uživatelů", value: stats.totalUsers, color: "bg-blue-50 text-blue-700", icon: "users" },
+    { label: "Aktivní přístupy", value: stats.activeAccesses, color: "bg-green-50 text-green-700", icon: "badge" },
+    { label: "Kurzy", value: stats.totalCourses, color: "bg-purple-50 text-purple-700", icon: "book" },
+    { label: "Lekce", value: stats.totalLessons, color: "bg-amber-50 text-amber-700", icon: "play" },
   ];
 
   return (
@@ -30,8 +31,8 @@ export default async function AdminPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         {statCards.map((s) => (
           <div key={s.label} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-            <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl text-xl mb-3 ${s.color}`}>
-              {s.icon}
+            <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl mb-3 ${s.color}`}>
+              <Icon name={s.icon} className="w-5 h-5" strokeWidth={1.75} />
             </div>
             <p className="text-3xl font-bold text-gray-900">{s.value}</p>
             <p className="text-sm text-gray-500 mt-1">{s.label}</p>
@@ -76,8 +77,8 @@ export default async function AdminPage() {
               href="/admin/kurzy"
               className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-navy/20 hover:bg-gray-50 transition-all group"
             >
-              <div className="w-10 h-10 bg-navy/10 rounded-xl flex items-center justify-center text-navy font-bold group-hover:bg-navy group-hover:text-white transition-all">
-                +
+              <div className="w-10 h-10 bg-navy/10 rounded-xl flex items-center justify-center text-navy group-hover:bg-navy group-hover:text-white transition-all">
+                <Icon name="plus" className="w-5 h-5" strokeWidth={2} />
               </div>
               <div>
                 <p className="font-medium text-gray-900 text-sm">Přidat nový kurz</p>
@@ -88,8 +89,8 @@ export default async function AdminPage() {
               href="/admin/uzivatele"
               className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-navy/20 hover:bg-gray-50 transition-all group"
             >
-              <div className="w-10 h-10 bg-navy/10 rounded-xl flex items-center justify-center text-navy font-bold group-hover:bg-navy group-hover:text-white transition-all">
-                👤
+              <div className="w-10 h-10 bg-navy/10 rounded-xl flex items-center justify-center text-navy group-hover:bg-navy group-hover:text-white transition-all">
+                <Icon name="users" className="w-5 h-5" />
               </div>
               <div>
                 <p className="font-medium text-gray-900 text-sm">Správa uživatelů</p>

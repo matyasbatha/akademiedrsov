@@ -5,6 +5,7 @@ import Link from "next/link";
 import { formatDate, formatPrice } from "@/lib/utils";
 import { getMyCourses } from "@/lib/access";
 import BuyCourseButton from "@/components/member/BuyCourseButton";
+import Icon from "@/components/ui/Icon";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -40,7 +41,7 @@ export default async function DashboardPage() {
     <div className="max-w-5xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">
-          Vítejte, {session.user.name?.split(" ")[0] ?? ""} 👋
+          Vítejte, {session.user.name?.split(" ")[0] ?? ""}
         </h1>
         <p className="text-gray-500 mt-1">Přehled vašich kurzů a studia.</p>
       </div>
@@ -56,7 +57,9 @@ export default async function DashboardPage() {
 
         {myCourses.length === 0 ? (
           <div className="bg-gradient-to-r from-navy to-navy-light rounded-2xl p-8 text-center text-white">
-            <div className="text-4xl mb-3">🎓</div>
+            <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4">
+              <Icon name="cap" className="w-7 h-7 text-gold" />
+            </div>
             <p className="font-bold text-lg mb-1">Zatím nemáte žádný kurz</p>
             <p className="text-white/70 text-sm mb-5">Vyberte si z naší nabídky a začněte studovat.</p>
             <Link

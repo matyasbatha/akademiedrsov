@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import { getActiveAccessCourseIds } from "@/lib/access";
 import { formatPrice } from "@/lib/utils";
 import BuyCourseButton from "@/components/member/BuyCourseButton";
+import Icon from "@/components/ui/Icon";
 
 export const metadata: Metadata = { title: "Kurzy" };
 
@@ -71,7 +72,9 @@ export default async function KurzyPage() {
 
       {courses.length === 0 && (
         <div className="text-center py-16">
-          <div className="text-5xl mb-4">📚</div>
+          <div className="w-14 h-14 rounded-2xl bg-navy/5 flex items-center justify-center mx-auto mb-4">
+            <Icon name="book" className="w-7 h-7 text-navy/40" />
+          </div>
           <p className="text-gray-500 text-lg">Zatím žádné kurzy. Brzy přibydou!</p>
         </div>
       )}

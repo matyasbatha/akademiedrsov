@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Metadata } from "next";
+import Icon from "@/components/ui/Icon";
 
 export const metadata: Metadata = { title: "Admin – Kurzy" };
 
@@ -32,7 +33,9 @@ export default async function AdminKurzyPage() {
 
       {courses.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center shadow-sm">
-          <div className="text-5xl mb-4">📚</div>
+          <div className="w-14 h-14 rounded-2xl bg-navy/5 flex items-center justify-center mx-auto mb-4">
+            <Icon name="book" className="w-7 h-7 text-navy/40" />
+          </div>
           <p className="text-gray-500 mb-4">Zatím žádné kurzy</p>
           <Link
             href="/admin/kurzy/novy"
@@ -49,9 +52,12 @@ export default async function AdminKurzyPage() {
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl overflow-hidden bg-navy/10 flex-shrink-0">
                     {course.coverImage ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img src={course.coverImage} alt="" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-navy/30 text-xl">▶</div>
+                      <div className="w-full h-full flex items-center justify-center text-navy/30">
+                        <Icon name="play" className="w-5 h-5" />
+                      </div>
                     )}
                   </div>
                   <div>

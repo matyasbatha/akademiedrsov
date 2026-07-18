@@ -28,7 +28,12 @@ export default function RegistracePage() {
       if (result?.error) {
         setError(result.error);
       } else {
-        router.push("/prihlaseni?registered=true");
+        const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");
+        router.push(
+          `/prihlaseni?registered=true${
+            callbackUrl ? `&callbackUrl=${encodeURIComponent(callbackUrl)}` : ""
+          }`
+        );
       }
     });
   }
@@ -39,7 +44,7 @@ export default function RegistracePage() {
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-navy">Vytvořit účet</h1>
           <p className="text-gray-500 mt-1">
-            Registrace je zdarma · 2 kurzy ihned k dispozici
+            Registrace je zdarma · přístup do akademie a vybrané kurzy zdarma
           </p>
         </div>
 

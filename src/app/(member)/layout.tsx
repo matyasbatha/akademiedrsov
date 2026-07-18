@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { logout } from "@/actions/auth";
+import Icon from "@/components/ui/Icon";
 
 export default async function MemberLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -29,16 +30,16 @@ export default async function MemberLayout({ children }: { children: React.React
 
         <nav className="flex-1 p-4 space-y-1">
           {[
-            { href: "/dashboard", icon: "⊞", label: "Dashboard" },
-            { href: "/kurzy", icon: "▶", label: "Kurzy" },
-            { href: "/ucet", icon: "◉", label: "Můj účet" },
+            { href: "/dashboard", icon: "dashboard", label: "Dashboard" },
+            { href: "/kurzy", icon: "book", label: "Kurzy" },
+            { href: "/ucet", icon: "user", label: "Můj účet" },
           ].map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:bg-white/10 hover:text-white transition-all text-sm font-medium"
             >
-              <span className="text-base">{item.icon}</span>
+              <Icon name={item.icon} className="w-5 h-5" />
               {item.label}
             </Link>
           ))}

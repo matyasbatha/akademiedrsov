@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 const publicRoutes = [
   "/",
+  "/chyby-kosmeticky",
   "/prihlaseni",
   "/registrace",
   "/api/auth",
