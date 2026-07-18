@@ -157,6 +157,19 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
         </div>
       )}
 
+      {/* Začít kurz – přehodí na první lekci */}
+      {canAccess && course.lessons.length > 0 && (
+        <Link
+          href={`/lekce/${course.lessons[0].slug}`}
+          className="flex items-center justify-center gap-2 bg-gold text-navy px-6 py-4 rounded-2xl font-bold text-lg hover:bg-gold-dark transition-all shadow-sm mb-6"
+        >
+          Začít kurz
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </Link>
+      )}
+
       {/* Lekce */}
       {course.lessons.length > 0 && (
         <div className="mb-6">
