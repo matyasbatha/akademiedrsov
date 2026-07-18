@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createCourse } from "@/actions/courses";
 import { slugify } from "@/lib/utils";
 import Link from "next/link";
+import CoverImageInput from "@/components/admin/CoverImageInput";
 
 export default function NovyKurzPage() {
   const router = useRouter();
@@ -96,13 +97,8 @@ export default function NovyKurzPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">URL obrázku (cover)</label>
-          <input
-            type="url"
-            name="coverImage"
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent"
-            placeholder="https://..."
-          />
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">Obrázek kurzu (cover)</label>
+          <CoverImageInput />
         </div>
 
         <div className="grid grid-cols-2 gap-4">

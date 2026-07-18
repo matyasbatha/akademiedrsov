@@ -4,6 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { updateCourse, deleteCourse } from "@/actions/courses";
 import Link from "next/link";
+import CoverImageInput from "@/components/admin/CoverImageInput";
 
 interface Course {
   id: string;
@@ -135,13 +136,8 @@ export default function EditCoursePage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">URL obrázku (cover)</label>
-          <input
-            type="url"
-            name="coverImage"
-            defaultValue={course.coverImage ?? ""}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent"
-          />
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">Obrázek kurzu (cover)</label>
+          <CoverImageInput defaultValue={course.coverImage ?? ""} />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
