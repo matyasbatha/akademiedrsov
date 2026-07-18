@@ -47,7 +47,7 @@ export default async function KurzyPage() {
             <span className="w-2 h-2 rounded-full bg-green-500" />
             Moje kurzy
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-3 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 md:overflow-visible [scrollbar-width:none] [-ms-overflow-style:none]">
             {myCourses.map((course) => (
               <CourseCard key={course.id} course={course} owned />
             ))}
@@ -62,7 +62,7 @@ export default async function KurzyPage() {
             <span className="w-2 h-2 rounded-full bg-gold" />
             {myCourses.length > 0 ? "Další kurzy" : "Nabídka kurzů"}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-3 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 md:overflow-visible [scrollbar-width:none] [-ms-overflow-style:none]">
             {availableCourses.map((course) => (
               <CourseCard key={course.id} course={course} owned={false} />
             ))}
@@ -101,7 +101,7 @@ function CourseCard({ course, owned }: { course: CardCourse; owned: boolean }) {
   }`;
 
   return (
-    <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all hover:border-gold/30 flex flex-col">
+    <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all hover:border-gold/30 flex flex-col shrink-0 w-[47%] snap-start md:w-auto">
       <Link href={`/kurzy/${course.slug}`} className="block">
         <div className="aspect-[16/9] bg-navy/10 relative overflow-hidden">
           {course.coverImage ? (
@@ -162,7 +162,7 @@ function CourseCard({ course, owned }: { course: CardCourse; owned: boolean }) {
               Otevřít kurz →
             </Link>
           ) : (
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
               <div className="flex items-baseline gap-2">
                 <span className="text-lg font-bold text-navy">{formatPrice(coursePricing(course).effective)}</span>
                 {(() => {
@@ -175,7 +175,7 @@ function CourseCard({ course, owned }: { course: CardCourse; owned: boolean }) {
               <BuyCourseButton
                 courseId={course.id}
                 courseSlug={course.slug}
-                className="bg-gold text-navy px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-gold-dark whitespace-nowrap"
+                className="bg-gold text-navy px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-gold-dark whitespace-nowrap text-center"
               >
                 {course.isComingSoon ? "Předprodej" : "Koupit"}
               </BuyCourseButton>
