@@ -5,6 +5,7 @@ const publicRoutes = [
   "/",
   "/chyby-kosmeticky",
   "/nabidka-kurzu",
+  "/kurz",
   "/prihlaseni",
   "/registrace",
   "/api/auth",

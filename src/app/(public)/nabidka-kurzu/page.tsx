@@ -184,8 +184,8 @@ export default async function NabidkaKurzuPage() {
                         Otevřít →
                       </Link>
                     ) : (
-                      <Link href="/registrace?callbackUrl=/kurzy" className="text-gold font-semibold text-sm hover:text-gold-dark">
-                        Registrací odemknout
+                      <Link href={`/kurz/${course.slug}`} className="text-gold font-semibold text-sm hover:text-gold-dark">
+                        Detail →
                       </Link>
                     )}
                   </div>

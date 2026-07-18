@@ -11,6 +11,7 @@ type SeedCourse = {
   price: number;
   originalPrice: number | null;
   isFree?: boolean;
+  coverImage?: string;
   order: number;
 };
 
@@ -40,6 +41,7 @@ const courses: SeedCourse[] = [
       "Zlaté kleopatřino ošetření je luxusní rituál inspirovaný egyptskou královnou, který kombinuje 24karátové zlato.",
     price: 1590,
     originalPrice: null,
+    coverImage: "/kurzy/kleopatra/cover.png",
     order: 3,
   },
   {
@@ -107,6 +109,7 @@ async function main() {
         description: c.description,
         price: c.price,
         originalPrice: c.originalPrice,
+        coverImage: c.coverImage,
         accessMonths: 6,
         isPublished: true,
         isFree: c.isFree ?? false,

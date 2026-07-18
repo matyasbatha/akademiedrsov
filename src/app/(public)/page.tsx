@@ -120,7 +120,7 @@ export default async function HomePage() {
               {courses.map((course) => (
                 <Link
                   key={course.id}
-                  href={`/prihlaseni?callbackUrl=/kurzy/${course.slug}`}
+                  href={`/kurz/${course.slug}`}
                   className="group flex flex-col rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-gold/40 hover:shadow-xl transition-all"
                 >
                   <div className="aspect-[16/10] overflow-hidden bg-navy/10">
