@@ -43,10 +43,20 @@ export default async function KurzyPage() {
       {/* Moje kurzy */}
       {myCourses.length > 0 && (
         <div className="mb-12">
-          <h2 className="text-lg font-bold text-gray-700 mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-green-500" />
-            Moje kurzy
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-700 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-green-500" />
+              Moje kurzy
+            </h2>
+            {myCourses.length > 1 && (
+              <span className="md:hidden text-xs text-gray-400 flex items-center gap-1">
+                Posuňte
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+            )}
+          </div>
           <div className="flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5">
             {myCourses.map((course) => (
               <CourseCard key={course.id} course={course} owned />
@@ -58,10 +68,20 @@ export default async function KurzyPage() {
       {/* Nabídka kurzů */}
       {availableCourses.length > 0 && (
         <div>
-          <h2 className="text-lg font-bold text-gray-700 mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-gold" />
-            {myCourses.length > 0 ? "Další kurzy" : "Nabídka kurzů"}
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-700 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-gold" />
+              {myCourses.length > 0 ? "Další kurzy" : "Nabídka kurzů"}
+            </h2>
+            {availableCourses.length > 1 && (
+              <span className="md:hidden text-xs text-gray-400 flex items-center gap-1">
+                Posuňte
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+            )}
+          </div>
           <div className="flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5">
             {availableCourses.map((course) => (
               <CourseCard key={course.id} course={course} owned={false} />
@@ -101,7 +121,7 @@ function CourseCard({ course, owned }: { course: CardCourse; owned: boolean }) {
   }`;
 
   return (
-    <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all hover:border-gold/30 flex flex-col shrink-0 w-[46%] md:w-auto">
+    <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all hover:border-gold/30 flex flex-col shrink-0 w-[80%] sm:w-[46%] md:w-auto">
       <Link href={`/kurzy/${course.slug}`} className="block">
         <div className="aspect-[16/9] bg-navy/10 relative overflow-hidden">
           {course.coverImage ? (
