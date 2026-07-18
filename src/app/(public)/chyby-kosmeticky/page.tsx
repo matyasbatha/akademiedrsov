@@ -22,7 +22,7 @@ const mistakes = [
   },
   {
     title: "Nedělají poctivou analýzu pleti",
-    desc: "Ošetření „od oka" vede k volbě špatných přípravků a postupů. Bez správné diagnostiky typu a stavu pleti nemůžete slíbit výsledek.",
+    desc: "Ošetření od oka vede k volbě špatných přípravků a postupů. Bez správné diagnostiky typu a stavu pleti nemůžete slíbit výsledek.",
   },
   {
     title: "Podceňují kontraindikace",
