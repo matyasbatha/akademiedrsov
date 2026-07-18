@@ -56,11 +56,12 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
       {/* Header */}
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden mb-6 shadow-sm">
         {course.coverImage && (
-          <div className="aspect-video bg-navy overflow-hidden">
+          <div className="relative w-full bg-navy overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={course.coverImage}
               alt={course.title}
-              className="w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover"
             />
           </div>
         )}

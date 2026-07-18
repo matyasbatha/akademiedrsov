@@ -103,7 +103,7 @@ function CourseCard({ course, owned }: { course: CardCourse; owned: boolean }) {
   return (
     <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all hover:border-gold/30 flex flex-col">
       <Link href={`/kurzy/${course.slug}`} className="block">
-        <div className="aspect-video bg-navy/10 relative overflow-hidden">
+        <div className="aspect-[16/9] bg-navy/10 relative overflow-hidden">
           {course.coverImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img

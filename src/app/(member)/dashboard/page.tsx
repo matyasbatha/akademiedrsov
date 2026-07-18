@@ -77,7 +77,7 @@ export default async function DashboardPage() {
                 href={`/kurzy/${course.slug}`}
                 className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all hover:border-gold/30"
               >
-                <div className="aspect-video bg-navy/10 relative overflow-hidden">
+                <div className="aspect-[16/9] bg-navy/10 relative overflow-hidden">
                   {course.coverImage ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={course.coverImage} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
@@ -112,7 +112,7 @@ export default async function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {availableCourses.map((course) => (
               <div key={course.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden flex flex-col">
-                <Link href={`/kurzy/${course.slug}`} className="aspect-video bg-navy/10 relative overflow-hidden block">
+                <Link href={`/kurzy/${course.slug}`} className="aspect-[16/9] bg-navy/10 relative overflow-hidden block">
                   {course.coverImage ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={course.coverImage} alt={course.title} className="w-full h-full object-cover" />

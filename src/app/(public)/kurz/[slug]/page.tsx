@@ -169,7 +169,7 @@ export default async function VerejnyKurzPage({ params }: Props) {
             <h2 className="text-2xl md:text-3xl font-bold text-navy mb-8 text-center">Ukázky z kurzu</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {media.gallery.map((src, i) => (
-                <div key={src} className="aspect-square rounded-2xl overflow-hidden bg-gray-100 border border-gray-100">
+                <div key={src} className="aspect-[1/1] rounded-2xl overflow-hidden bg-gray-100 border border-gray-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={src} alt={`Ukázka ${i + 1}`} className="w-full h-full object-cover" />
                 </div>
