@@ -63,7 +63,30 @@ export default async function LessonPage({ params }: Props) {
      * vpravo se skládá obsah.
      * overflow-x-hidden zabraňuje horizontálnímu scrollu na mobilu.
      */
-    <div className="overflow-x-hidden lg:flex lg:gap-8 lg:items-start">
+    <div className="overflow-x-hidden">
+
+      {/* ─── Hlavička: název + popis NAD videem ────────────── */}
+      <div className="mb-5 space-y-3">
+        <nav className="flex items-center gap-1.5 text-xs text-gray-400 flex-wrap">
+          <Link href="/kurzy" className="hover:text-navy transition-colors">Kurzy</Link>
+          <span>/</span>
+          <Link href={`/kurzy/${lesson.course.slug}`} className="hover:text-navy transition-colors">{lesson.course.title}</Link>
+          <span>/</span>
+          <span className="text-gray-600 font-medium truncate max-w-[160px]">{lesson.title}</span>
+        </nav>
+        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm w-full overflow-hidden">
+          <p className="text-xs font-semibold text-gold uppercase tracking-wide mb-1">
+            Lekce {currentIndex + 1} z {allLessons.length}
+          </p>
+          <h1 className="text-xl md:text-2xl font-bold text-navy leading-tight mb-2 [overflow-wrap:anywhere]">{lesson.title}</h1>
+          {lesson.description && (
+            <p className="text-gray-600 text-sm leading-relaxed [overflow-wrap:anywhere]">{lesson.description}</p>
+          )}
+        </div>
+      </div>
+
+      {/* ─── Video + obsah ─────────────────────────────────── */}
+      <div className="lg:flex lg:gap-8 lg:items-start">
 
       {/* ─── Video sloupec ─────────────────────────────────── */}
       <div className="lg:flex-shrink-0 lg:sticky lg:top-4">
@@ -72,9 +95,9 @@ export default async function LessonPage({ params }: Props) {
           Desktop: výška = viewport − offset, šířka se dopočítá z aspect-ratio 9:16
         */}
         <div className="
-          -mx-6 -mt-6 md:-mx-8 md:-mt-8
+          -mx-6 md:-mx-8
           aspect-[9/16] bg-black overflow-hidden
-          lg:mx-0 lg:mt-0
+          lg:mx-0
           lg:h-[calc(100svh-96px)] lg:w-auto
           lg:rounded-2xl lg:shadow-2xl
         ">
@@ -137,30 +160,6 @@ export default async function LessonPage({ params }: Props) {
 
       {/* ─── Obsah sloupec ─────────────────────────────────── */}
       <div className="min-w-0 w-full flex-1 space-y-4 pt-5 lg:pt-0 lg:max-w-lg">
-
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-xs text-gray-400 flex-wrap">
-          <Link href="/kurzy" className="hover:text-navy transition-colors">
-            Kurzy
-          </Link>
-          <span>/</span>
-          <Link href={`/kurzy/${lesson.course.slug}`} className="hover:text-navy transition-colors">
-            {lesson.course.title}
-          </Link>
-          <span>/</span>
-          <span className="text-gray-600 font-medium truncate max-w-[160px]">{lesson.title}</span>
-        </nav>
-
-        {/* Název + popis */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm w-full overflow-hidden">
-          <p className="text-xs font-semibold text-gold uppercase tracking-wide mb-1">
-            Lekce {currentIndex + 1} z {allLessons.length}
-          </p>
-          <h1 className="text-xl font-bold text-navy leading-tight mb-2 [overflow-wrap:anywhere]">{lesson.title}</h1>
-          {lesson.description && (
-            <p className="text-gray-600 text-sm leading-relaxed [overflow-wrap:anywhere]">{lesson.description}</p>
-          )}
-        </div>
 
         {/* Rychlé pokračování na další lekci – pouze mobil (desktop má navigaci pod videem) */}
         {canAccess && nextLesson && (
@@ -289,6 +288,7 @@ export default async function LessonPage({ params }: Props) {
             </span>
           </Link>
         )}
+      </div>
       </div>
     </div>
   );
