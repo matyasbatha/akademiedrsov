@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { formatPrice } from "@/lib/utils";
+import { courseMedia } from "@/data/courseMedia";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -46,6 +47,7 @@ export default async function VerejnyKurzPage({ params }: Props) {
   if (!course) notFound();
 
   const isFree = course.isFree || course.price <= 0;
+  const media = courseMedia[course.slug] ?? {};
 
   return (
     <div className="bg-white">
@@ -99,6 +101,27 @@ export default async function VerejnyKurzPage({ params }: Props) {
         </div>
       </section>
 
+      {/* Ukázka ze školení (YouTube) */}
+      {media.youtubeId && (
+        <section className="py-14 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8">
+              <span className="text-gold font-semibold text-sm uppercase tracking-widest">Ukázka zdarma</span>
+              <h2 className="text-2xl md:text-3xl font-bold text-navy mt-2">Ukázka ze školení</h2>
+            </div>
+            <div className="relative w-full rounded-2xl overflow-hidden shadow-xl bg-black" style={{ aspectRatio: "16 / 9" }}>
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src={`https://www.youtube.com/embed/${media.youtubeId}${media.youtubeStart ? `?start=${media.youtubeStart}` : ""}`}
+                title="Ukázka ze školení"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* O čem kurz je + obsah */}
       <section className="py-16 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -129,6 +152,23 @@ export default async function VerejnyKurzPage({ params }: Props) {
           )}
         </div>
       </section>
+
+      {/* Ukázky z kurzu (galerie) */}
+      {media.gallery && media.gallery.length > 0 && (
+        <section className="py-14 bg-white">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-navy mb-8 text-center">Ukázky z kurzu</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {media.gallery.map((src, i) => (
+                <div key={src} className="aspect-square rounded-2xl overflow-hidden bg-gray-100 border border-gray-100">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={src} alt={`Ukázka ${i + 1}`} className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Jak kurz odemknout */}
       <section className="py-16 bg-gray-50">
