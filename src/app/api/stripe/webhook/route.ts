@@ -1,27 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
-import { MembershipStatus } from "@prisma/client";
 import Stripe from "stripe";
-
-function getPeriodEnd(subscription: Stripe.Subscription): Date | undefined {
-  // In Stripe API 2025+, current_period_end is deprecated.
-  // Use cancel_at or trial_end as the end date reference.
-  const legacySub = subscription as unknown as { current_period_end?: number };
-  if (legacySub.current_period_end) {
-    return new Date(legacySub.current_period_end * 1000);
-  }
-  if (subscription.cancel_at) {
-    return new Date(subscription.cancel_at * 1000);
-  }
-  if (subscription.trial_end) {
-    return new Date(subscription.trial_end * 1000);
-  }
-  // Fallback: 30 days from now for monthly, 365 for yearly
-  const now = new Date();
-  now.setDate(now.getDate() + 30);
-  return now;
-}
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -32,7 +12,6 @@ export async function POST(req: NextRequest) {
   }
 
   let event: Stripe.Event;
-
   try {
     event = stripe.webhooks.constructEvent(
       body,
@@ -42,121 +21,87 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("❌ Webhook signature failed:", message);
-    console.error("   STRIPE_WEBHOOK_SECRET prefix:", process.env.STRIPE_WEBHOOK_SECRET?.slice(0, 20));
-    return NextResponse.json({ error: "Invalid signature", detail: message }, { status: 400 });
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
   try {
     switch (event.type) {
+      // Úspěšná jednorázová platba za kurz
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        if (session.mode !== "subscription") break;
+        if (session.mode !== "payment") break;
 
-        const customerId = session.customer as string;
-        const subscriptionId = session.subscription as string;
         const userId = session.metadata?.userId;
+        const courseId = session.metadata?.courseId;
+        const accessMonths = Number(session.metadata?.accessMonths ?? "6");
+        if (!userId || !courseId) break;
 
-        if (!userId) break;
+        const course = await prisma.course.findUnique({ where: { id: courseId } });
+        if (!course) break;
 
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        const email =
+          session.customer_email ?? session.customer_details?.email ?? "";
+        const name = session.customer_details?.name ?? null;
+        const amount = Math.round((session.amount_total ?? course.price * 100) / 100);
 
-        await prisma.membership.upsert({
-          where: { userId },
-          update: {
-            stripeCustomerId: customerId,
-            stripeSubscriptionId: subscriptionId,
-            stripePriceId: subscription.items.data[0]?.price.id,
-            status: subscription.status as MembershipStatus,
-            currentPeriodEnd: getPeriodEnd(subscription),
-            cancelAtPeriodEnd: subscription.cancel_at_period_end,
-          },
+        // 1) Záznam objednávky (idempotentně podle session id)
+        await prisma.order.upsert({
+          where: { stripeSessionId: session.id },
+          update: { status: "paid" },
           create: {
             userId,
-            stripeCustomerId: customerId,
-            stripeSubscriptionId: subscriptionId,
-            stripePriceId: subscription.items.data[0]?.price.id,
-            status: subscription.status as MembershipStatus,
-            currentPeriodEnd: getPeriodEnd(subscription),
-            cancelAtPeriodEnd: subscription.cancel_at_period_end,
+            courseId,
+            email,
+            name,
+            amount,
+            currency: (session.currency ?? course.currency).toLowerCase(),
+            status: "paid",
+            stripeSessionId: session.id,
+            stripePaymentId:
+              typeof session.payment_intent === "string"
+                ? session.payment_intent
+                : null,
           },
         });
 
-        await prisma.user.update({
-          where: { id: userId },
+        // 2) Přístup ke kurzu na accessMonths měsíců
+        const expiresAt = new Date();
+        expiresAt.setMonth(expiresAt.getMonth() + accessMonths);
+
+        await prisma.courseAccess.upsert({
+          where: { userId_courseId: { userId, courseId } },
+          update: { expiresAt },
+          create: { userId, courseId, expiresAt },
+        });
+
+        // 3) Z GUEST udělej MEMBER (ADMIN nikdy nedegradujeme)
+        await prisma.user.updateMany({
+          where: { id: userId, role: "GUEST" },
           data: { role: "MEMBER" },
         });
 
         break;
       }
 
-      case "customer.subscription.updated": {
-        const subscription = event.data.object as Stripe.Subscription;
-        const customerId = subscription.customer as string;
+      // Vrácení platby → zneplatni přístup
+      case "charge.refunded": {
+        const charge = event.data.object as Stripe.Charge;
+        const paymentIntentId =
+          typeof charge.payment_intent === "string" ? charge.payment_intent : null;
+        if (!paymentIntentId) break;
 
-        await prisma.membership.updateMany({
-          where: { stripeCustomerId: customerId },
-          data: {
-            status: subscription.status as MembershipStatus,
-            stripePriceId: subscription.items.data[0]?.price.id,
-            currentPeriodEnd: getPeriodEnd(subscription),
-            cancelAtPeriodEnd: subscription.cancel_at_period_end,
-          },
+        const order = await prisma.order.findFirst({
+          where: { stripePaymentId: paymentIntentId },
         });
-
-        const isActive =
-          subscription.status === "active" || subscription.status === "trialing";
-
-        const membership = await prisma.membership.findUnique({
-          where: { stripeCustomerId: customerId },
-          select: { userId: true },
-        });
-
-        if (membership) {
-          await prisma.user.update({
-            where: { id: membership.userId },
-            data: { role: isActive ? "MEMBER" : "GUEST" },
+        if (order) {
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { status: "refunded" },
+          });
+          await prisma.courseAccess.deleteMany({
+            where: { userId: order.userId, courseId: order.courseId },
           });
         }
-
-        break;
-      }
-
-      case "customer.subscription.deleted": {
-        const subscription = event.data.object as Stripe.Subscription;
-        const customerId = subscription.customer as string;
-
-        await prisma.membership.updateMany({
-          where: { stripeCustomerId: customerId },
-          data: {
-            status: "canceled",
-            cancelAtPeriodEnd: false,
-          },
-        });
-
-        const membership = await prisma.membership.findUnique({
-          where: { stripeCustomerId: customerId },
-          select: { userId: true },
-        });
-
-        if (membership) {
-          await prisma.user.update({
-            where: { id: membership.userId },
-            data: { role: "GUEST" },
-          });
-        }
-
-        break;
-      }
-
-      case "invoice.payment_failed": {
-        const invoice = event.data.object as Stripe.Invoice;
-        const customerId = invoice.customer as string;
-
-        await prisma.membership.updateMany({
-          where: { stripeCustomerId: customerId },
-          data: { status: "past_due" },
-        });
-
         break;
       }
     }

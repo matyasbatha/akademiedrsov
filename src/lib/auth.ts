@@ -77,14 +77,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
-  events: {
-    async createUser({ user }) {
-      await prisma.membership.create({
-        data: {
-          userId: user.id!,
-          status: "inactive",
-        },
-      });
-    },
-  },
 });

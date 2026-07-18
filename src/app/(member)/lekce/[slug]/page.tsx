@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { isActiveMembership } from "@/lib/stripe";
+import { hasCourseAccess } from "@/lib/access";
 import { Metadata } from "next";
 import VideoPlayer from "@/components/member/VideoPlayer";
 import LessonListCollapsible from "@/components/member/LessonListCollapsible";
@@ -22,22 +22,22 @@ export default async function LessonPage({ params }: Props) {
   const session = await auth();
   if (!session?.user?.id) redirect("/prihlaseni");
 
-  const [lesson, membership] = await Promise.all([
-    prisma.lesson.findUnique({
-      where: { slug, isPublished: true },
-      include: {
-        course: true,
-        downloads: { orderBy: { createdAt: "asc" } },
-      },
-    }),
-    prisma.membership.findUnique({ where: { userId: session.user.id } }),
-  ]);
+  const lesson = await prisma.lesson.findUnique({
+    where: { slug, isPublished: true },
+    include: {
+      course: true,
+      downloads: { orderBy: { createdAt: "asc" } },
+    },
+  });
 
   if (!lesson) notFound();
 
-  const isActive = isActiveMembership(membership?.status);
-  const canAccess =
-    isActive || lesson.isFree || lesson.course.isFree || session.user.role === "ADMIN";
+  const courseAccess = await hasCourseAccess(
+    session.user.id,
+    lesson.course,
+    session.user.role
+  );
+  const canAccess = courseAccess || lesson.isFree;
 
   const allLessons = await prisma.lesson.findMany({
     where: { courseId: lesson.courseId, isPublished: true },
@@ -80,14 +80,14 @@ export default async function LessonPage({ params }: Props) {
                 </svg>
               </div>
               <div>
-                <p className="text-white font-semibold text-lg leading-tight mb-1">Tato lekce je pro členy</p>
-                <p className="text-white/50 text-sm">Aktivuj členství a získej přístup ke všem lekcím</p>
+                <p className="text-white font-semibold text-lg leading-tight mb-1">Tato lekce je zamčená</p>
+                <p className="text-white/50 text-sm">Kupte si kurz a získejte přístup ke všem lekcím</p>
               </div>
               <Link
-                href="/clenstvi"
+                href={`/kurzy/${lesson.course.slug}`}
                 className="mt-2 px-6 py-3 bg-gold text-navy font-bold rounded-xl text-sm hover:bg-yellow-400 transition-colors"
               >
-                Aktivovat členství
+                Koupit kurz
               </Link>
             </div>
           ) : lesson.videoUrl ? (

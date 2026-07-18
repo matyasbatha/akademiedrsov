@@ -39,9 +39,9 @@ export default function Footer() {
             <h3 className="font-semibold text-gold mb-4">Platforma</h3>
             <ul className="space-y-2">
               {[
-                { href: "/clenstvi", label: "Členství" },
                 { href: "/kurzy", label: "Kurzy" },
                 { href: "/prihlaseni", label: "Přihlásit se" },
+                { href: "/registrace", label: "Registrovat se" },
                 { href: "/dashboard", label: "Dashboard" },
               ].map((link) => (
                 <li key={link.href}>

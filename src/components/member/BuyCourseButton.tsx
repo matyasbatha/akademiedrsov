@@ -4,22 +4,22 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import type { PlanKey } from "@/lib/stripe";
 
-interface CheckoutButtonProps {
-  planKey: PlanKey;
+interface Props {
+  courseId: string;
+  courseSlug: string;
   children: React.ReactNode;
   className?: string;
 }
 
-export default function CheckoutButton({ planKey, children, className }: CheckoutButtonProps) {
+export default function BuyCourseButton({ courseId, courseSlug, children, className }: Props) {
   const { data: session } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   async function handleClick() {
     if (!session?.user) {
-      router.push("/prihlaseni?callbackUrl=/clenstvi");
+      router.push(`/prihlaseni?callbackUrl=/kurzy/${courseSlug}`);
       return;
     }
 
@@ -28,16 +28,16 @@ export default function CheckoutButton({ planKey, children, className }: Checkou
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planKey }),
+        body: JSON.stringify({ courseId }),
       });
-
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        setLoading(false);
       }
     } catch (error) {
       console.error(error);
-    } finally {
       setLoading(false);
     }
   }
@@ -46,10 +46,7 @@ export default function CheckoutButton({ planKey, children, className }: Checkou
     <button
       onClick={handleClick}
       disabled={loading}
-      className={cn(
-        "disabled:opacity-50 disabled:cursor-not-allowed transition-all",
-        className
-      )}
+      className={cn("disabled:opacity-50 disabled:cursor-not-allowed transition-all", className)}
     >
       {loading ? (
         <span className="flex items-center justify-center gap-2">
@@ -57,7 +54,7 @@ export default function CheckoutButton({ planKey, children, className }: Checkou
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          Přesměrovávám...
+          Přesměrovávám…
         </span>
       ) : (
         children

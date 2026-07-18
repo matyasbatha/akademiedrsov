@@ -2,11 +2,14 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { isActiveMembership } from "@/lib/stripe";
 import { Metadata } from "next";
+import { hasCourseAccess } from "@/lib/access";
+import { formatPrice } from "@/lib/utils";
+import BuyCourseButton from "@/components/member/BuyCourseButton";
 
 interface Props {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ success?: string; canceled?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -15,29 +18,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: course?.title ?? "Kurz" };
 }
 
-export default async function CourseDetailPage({ params }: Props) {
+export default async function CourseDetailPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const { success } = await searchParams;
   const session = await auth();
   if (!session?.user?.id) redirect("/prihlaseni");
 
-  const [course, membership] = await Promise.all([
-    prisma.course.findUnique({
-      where: { slug, isPublished: true },
-      include: {
-        lessons: {
-          where: { isPublished: true },
-          orderBy: { order: "asc" },
-        },
-        downloads: { orderBy: { createdAt: "asc" } },
+  const course = await prisma.course.findUnique({
+    where: { slug, isPublished: true },
+    include: {
+      lessons: {
+        where: { isPublished: true },
+        orderBy: { order: "asc" },
       },
-    }),
-    prisma.membership.findUnique({ where: { userId: session.user.id } }),
-  ]);
+      downloads: { orderBy: { createdAt: "asc" } },
+    },
+  });
 
   if (!course) notFound();
 
-  const isActive = isActiveMembership(membership?.status);
-  const canAccess = isActive || course.isFree || session.user.role === "ADMIN";
+  const canAccess = await hasCourseAccess(session.user.id, course, session.user.role);
 
   // canAccess = false znamená, že uživatel vidí kurz, ale lekce jsou zamčené
 
@@ -87,29 +87,47 @@ export default async function CourseDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Paywall banner pro nezaplacené */}
+      {/* Úspěšný nákup */}
+      {success && canAccess && (
+        <div className="bg-green-50 border border-green-200 rounded-2xl p-5 mb-6 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-green-500 text-white flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div>
+            <p className="font-bold text-green-800">Kurz je váš!</p>
+            <p className="text-green-700 text-sm">Přístup máte aktivní {course.accessMonths} měsíců. Pusťte se do studia 👇</p>
+          </div>
+        </div>
+      )}
+
+      {/* Prodejní box pro nezakoupené */}
       {!canAccess && (
         <div className="bg-gradient-to-r from-navy to-navy-light rounded-2xl p-6 mb-6 text-white">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-gold flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-navy" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-              </svg>
-            </div>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <p className="font-bold text-lg">Tento kurz vyžaduje členství</p>
-              <p className="text-white/70 text-sm">Odemkněte přístup ke všem kurzům za 999 Kč/měsíc</p>
+              <p className="font-bold text-lg mb-1">Získejte přístup k tomuto kurzu</p>
+              <p className="text-white/70 text-sm">
+                Jednorázová platba · {course.accessMonths} měsíců přístup · certifikát po dokončení
+              </p>
+              <div className="flex items-baseline gap-3 mt-3">
+                <span className="text-3xl font-bold text-gold">{formatPrice(course.price)}</span>
+                {course.originalPrice && course.originalPrice > course.price && (
+                  <span className="text-white/50 line-through text-lg">
+                    {formatPrice(course.originalPrice)}
+                  </span>
+                )}
+              </div>
             </div>
+            <BuyCourseButton
+              courseId={course.id}
+              courseSlug={course.slug}
+              className="bg-gold text-navy px-8 py-4 rounded-xl font-bold text-lg hover:bg-gold-dark whitespace-nowrap"
+            >
+              Koupit kurz
+            </BuyCourseButton>
           </div>
-          <Link
-            href="/clenstvi"
-            className="inline-flex items-center gap-2 bg-gold text-navy px-6 py-3 rounded-xl font-bold hover:bg-gold-dark transition-all mt-2"
-          >
-            Aktivovat členství
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </Link>
         </div>
       )}
 

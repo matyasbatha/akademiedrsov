@@ -20,14 +20,15 @@ Vlastní členská platforma postavená na Next.js, Prisma, Stripe a Neon Postgr
 
 1. Jděte na [neon.tech](https://neon.tech) a registrujte se
 2. Vytvořte nový projekt
-3. Zkopírujte **Connection string** (postgresql://...)
+3. Zkopírujte **Connection string** (postgresql://...) postgresql://neondb_owner:npg_PSomQhB4LH6g@ep-blue-fog-agq05qg2.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require
 
 ### 2. Nastavte Stripe
 
 1. Jděte na [dashboard.stripe.com](https://dashboard.stripe.com)
 2. Vytvořte 2 produkty:
-   - **Měsíční členství** → cena 999 Kč/měsíc → zkopírujte Price ID (price_...)
+   - **Měsíční členství** → cena 999 Kč/měsíc → zkopírujte Price ID (price_...) price_1TI82mG9PNrhEiTRE380s0MD
    - **Roční členství** → cena 9 990 Kč/rok → zkopírujte Price ID
+   price_1TI9gRG9PNrhEiTRMAAbyg3F
 3. Aktivujte **Customer Portal** v: Billing → Customer portal → Settings
 
 ### 3. Nastavte Google OAuth (volitelné)
@@ -39,7 +40,7 @@ Vlastní členská platforma postavená na Next.js, Prisma, Stripe a Neon Postgr
 ### 4. Nastavte UploadThing
 
 1. [uploadthing.com](https://uploadthing.com) → registrace
-2. Vytvořte app → zkopírujte token
+2. Vytvořte app → zkopírujte token UPLOADTHING_TOKEN='eyJhcGlLZXkiOiJza19saXZlX2Q2ZjJhNjcwYzFiMGVhNzVlYjY0ZTNiYmU1YmE2M2Q0M2NlZGY3MWY3MWMyOGJhZDhjOWUzMDFjMzkwNGYwNWUiLCJhcHBJZCI6ImI4emsxa2VodHYiLCJyZWdpb25zIjpbInNlYTEiXX0='
 
 ### 5. Nastavte `.env`
 

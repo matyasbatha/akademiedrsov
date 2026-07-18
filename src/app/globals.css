@@ -7,6 +7,9 @@
   --gold: #c9a84c;
   --gold-light: #e4c46e;
   --gold-dark: #a8893a;
+  /* Systémové fonty – bez závislosti na stahování z Google (rychlejší start) */
+  --font-geist-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 @theme inline {

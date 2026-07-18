@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { isActiveMembership } from "@/lib/stripe";
+import { hasCourseAccess } from "@/lib/access";
 import CertificatePDF from "@/components/CertificatePDF";
 import React from "react";
 
@@ -18,22 +18,18 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
   const { courseId } = await params;
 
-  const [course, membership] = await Promise.all([
-    prisma.course.findUnique({
-      where: { id: courseId, isPublished: true },
-    }),
-    prisma.membership.findUnique({ where: { userId: session.user.id } }),
-  ]);
+  const course = await prisma.course.findUnique({
+    where: { id: courseId, isPublished: true },
+  });
 
   if (!course) {
     return NextResponse.json({ error: "Course not found" }, { status: 404 });
   }
 
-  const isActive = isActiveMembership(membership?.status);
-  const canAccess = isActive || course.isFree || session.user.role === "ADMIN";
+  const canAccess = await hasCourseAccess(session.user.id, course, session.user.role);
 
   if (!canAccess) {
-    return NextResponse.json({ error: "Membership required" }, { status: 403 });
+    return NextResponse.json({ error: "Access required" }, { status: 403 });
   }
 
   const recipientName = session.user.name ?? session.user.email ?? "Absolvent";

@@ -11,12 +11,11 @@ export default async function AdminPage() {
   const recentUsers = await prisma.user.findMany({
     orderBy: { createdAt: "desc" },
     take: 5,
-    include: { membership: { select: { status: true } } },
   });
 
   const statCards = [
     { label: "Celkem uživatelů", value: stats.totalUsers, color: "bg-blue-50 text-blue-700", icon: "👤" },
-    { label: "Aktivní členové", value: stats.activeMembers, color: "bg-green-50 text-green-700", icon: "✅" },
+    { label: "Aktivní přístupy", value: stats.activeAccesses, color: "bg-green-50 text-green-700", icon: "✅" },
     { label: "Kurzy", value: stats.totalCourses, color: "bg-purple-50 text-purple-700", icon: "📚" },
     { label: "Lekce", value: stats.totalLessons, color: "bg-amber-50 text-amber-700", icon: "▶" },
   ];
@@ -59,11 +58,11 @@ export default async function AdminPage() {
                   <p className="text-xs text-gray-400 truncate">{user.email}</p>
                 </div>
                 <div className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                  user.membership?.status === "active" ? "bg-green-100 text-green-700" :
-                  user.membership?.status === "trialing" ? "bg-blue-100 text-blue-700" :
+                  user.role === "ADMIN" ? "bg-purple-100 text-purple-700" :
+                  user.role === "MEMBER" ? "bg-navy/10 text-navy" :
                   "bg-gray-100 text-gray-500"
                 }`}>
-                  {user.membership?.status ?? "–"}
+                  {user.role}
                 </div>
               </div>
             ))}

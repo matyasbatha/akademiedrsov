@@ -29,6 +29,9 @@ export default function NovyKurzPage() {
           slug: form.get("slug") as string,
           description: form.get("description") as string || undefined,
           coverImage: form.get("coverImage") as string || undefined,
+          price: Number(form.get("price")) || 0,
+          originalPrice: Number(form.get("originalPrice")) || null,
+          accessMonths: Number(form.get("accessMonths")) || 6,
           isPublished: form.getAll("isPublished").includes("true"),
           isFree: form.getAll("isFree").includes("true"),
           order: Number(form.get("order")) || 0,
@@ -102,14 +105,50 @@ export default function NovyKurzPage() {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">Pořadí</label>
-          <input
-            type="number"
-            name="order"
-            defaultValue={0}
-            className="w-32 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent"
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Cena (Kč) *</label>
+            <input
+              type="number"
+              name="price"
+              min={0}
+              defaultValue={0}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent"
+              placeholder="1790"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Původní cena (Kč)</label>
+            <input
+              type="number"
+              name="originalPrice"
+              min={0}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent"
+              placeholder="přeškrtnutá cena (volitelné)"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Délka přístupu (měsíce)</label>
+            <input
+              type="number"
+              name="accessMonths"
+              min={1}
+              defaultValue={6}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Pořadí</label>
+            <input
+              type="number"
+              name="order"
+              defaultValue={0}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent"
+            />
+          </div>
         </div>
 
         <div className="flex items-center gap-6">
@@ -131,7 +170,7 @@ export default function NovyKurzPage() {
               value="true"
               className="w-4 h-4 rounded accent-navy"
             />
-            <span className="text-sm font-medium text-gray-700">Zdarma (bez členství)</span>
+            <span className="text-sm font-medium text-gray-700">Zdarma (zdarma pro všechny)</span>
           </label>
         </div>
 

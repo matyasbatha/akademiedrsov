@@ -26,19 +26,13 @@ export default function Header() {
 
           <nav className="hidden md:flex items-center gap-6">
             <Link
-              href="/clenstvi"
+              href="/kurzy"
               className="text-gray-600 hover:text-navy font-medium transition-colors"
             >
-              Členství
+              Kurzy
             </Link>
             {session?.user ? (
               <>
-                <Link
-                  href="/kurzy"
-                  className="text-gray-600 hover:text-navy font-medium transition-colors"
-                >
-                  Kurzy
-                </Link>
                 <Link
                   href="/dashboard"
                   className="text-gray-600 hover:text-navy font-medium transition-colors"
@@ -93,10 +87,10 @@ export default function Header() {
                   Přihlásit se
                 </Link>
                 <Link
-                  href="/clenstvi"
+                  href="/registrace"
                   className="bg-gold text-navy px-5 py-2 rounded-lg font-semibold hover:bg-gold-dark transition-all shadow-sm hover:shadow-md"
                 >
-                  Začít členství
+                  Registrovat se
                 </Link>
               </div>
             )}
@@ -120,14 +114,11 @@ export default function Header() {
       {menuOpen && (
         <div className="md:hidden border-t border-gray-100 bg-white py-2">
           <div className="px-4 space-y-1">
-            <Link href="/clenstvi" className="block py-2 text-gray-600 font-medium" onClick={() => setMenuOpen(false)}>
-              Členství
+            <Link href="/kurzy" className="block py-2 text-gray-600 font-medium" onClick={() => setMenuOpen(false)}>
+              Kurzy
             </Link>
             {session?.user ? (
               <>
-                <Link href="/kurzy" className="block py-2 text-gray-600 font-medium" onClick={() => setMenuOpen(false)}>
-                  Kurzy
-                </Link>
                 <Link href="/dashboard" className="block py-2 text-gray-600 font-medium" onClick={() => setMenuOpen(false)}>
                   Dashboard
                 </Link>
@@ -150,8 +141,8 @@ export default function Header() {
                 <Link href="/prihlaseni" className="block py-2 text-navy font-medium" onClick={() => setMenuOpen(false)}>
                   Přihlásit se
                 </Link>
-                <Link href="/clenstvi" className="block py-2 text-gold font-semibold" onClick={() => setMenuOpen(false)}>
-                  Začít členství →
+                <Link href="/registrace" className="block py-2 text-gold font-semibold" onClick={() => setMenuOpen(false)}>
+                  Registrovat se →
                 </Link>
               </>
             )}

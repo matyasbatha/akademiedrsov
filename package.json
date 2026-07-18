@@ -3,11 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
+    "dev:turbo": "next dev",
     "build": "prisma generate && next build",
     "postinstall": "prisma generate",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "tsx prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
@@ -36,6 +41,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
     "tailwindcss": "^4",
+    "tsx": "^4.19.2",
     "typescript": "^5"
   }
 }
