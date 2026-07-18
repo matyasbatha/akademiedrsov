@@ -93,7 +93,7 @@ export default async function AdminPage() {
               </div>
               <div>
                 <p className="font-medium text-gray-900 text-sm">Správa uživatelů</p>
-                <p className="text-xs text-gray-400">Přístupy a členství</p>
+                <p className="text-xs text-gray-400">Role a přístupy ke kurzům</p>
               </div>
             </Link>
           </div>
