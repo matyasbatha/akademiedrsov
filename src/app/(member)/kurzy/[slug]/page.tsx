@@ -145,6 +145,18 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
         </div>
       )}
 
+      {/* Úvodní text – jak kurz funguje */}
+      {canAccess && course.lessons.length > 0 && (
+        <div className="bg-navy/5 border border-navy/10 rounded-2xl p-5 mb-6">
+          <p className="text-gray-700 text-sm leading-relaxed">
+            Kurz se skládá z <strong className="text-navy">{course.lessons.length} video lekcí</strong>. Projděte
+            je postupně ve svém tempu. Po zhlédnutí všech lekcí si stáhnete{" "}
+            <strong className="text-navy">skripta a kontraindikace v PDF</strong> a necháte si vygenerovat{" "}
+            <strong className="text-navy">certifikát o proškolení</strong> přímo na jméno uvedené ve vašem účtu.
+          </p>
+        </div>
+      )}
+
       {/* Lekce */}
       {course.lessons.length > 0 && (
         <div className="mb-6">

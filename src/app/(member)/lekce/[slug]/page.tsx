@@ -48,6 +48,13 @@ export default async function LessonPage({ params }: Props) {
   const currentIndex = allLessons.findIndex((l) => l.slug === slug);
   const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
   const nextLesson = currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
+  const isLastLesson = !nextLesson;
+
+  // Materiály na úrovni kurzu (skripta, kontraindikace) – ukážeme po dokončení
+  const courseDownloads = await prisma.download.findMany({
+    where: { courseId: lesson.courseId },
+    orderBy: { createdAt: "asc" },
+  });
 
   return (
     /*
@@ -146,11 +153,30 @@ export default async function LessonPage({ params }: Props) {
 
         {/* Název + popis */}
         <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm w-full overflow-hidden">
+          <p className="text-xs font-semibold text-gold uppercase tracking-wide mb-1">
+            Lekce {currentIndex + 1} z {allLessons.length}
+          </p>
           <h1 className="text-xl font-bold text-navy leading-tight mb-2 [overflow-wrap:anywhere]">{lesson.title}</h1>
           {lesson.description && (
             <p className="text-gray-600 text-sm leading-relaxed [overflow-wrap:anywhere]">{lesson.description}</p>
           )}
         </div>
+
+        {/* Rychlé pokračování na další lekci */}
+        {canAccess && nextLesson && (
+          <Link
+            href={`/lekce/${nextLesson.slug}`}
+            className="flex items-center justify-between gap-3 bg-navy text-white rounded-2xl p-4 shadow-sm active:opacity-90 hover:bg-navy-light transition-all"
+          >
+            <span className="min-w-0">
+              <span className="block text-xs text-white/60">Pokračovat na další lekci</span>
+              <span className="block font-semibold leading-tight truncate">{nextLesson.title}</span>
+            </span>
+            <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </Link>
+        )}
 
         {/* Materiály ke stažení – pouze pro členy */}
         {canAccess && lesson.downloads.length > 0 && (
@@ -184,6 +210,60 @@ export default async function LessonPage({ params }: Props) {
                 </a>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Po dokončení kurzu – materiály + certifikát (jen poslední lekce) */}
+        {canAccess && isLastLesson && (
+          <div className="bg-gradient-to-br from-navy to-navy-light rounded-2xl p-6 shadow-sm text-white">
+            <div className="text-center mb-5">
+              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-3">
+                <svg className="w-7 h-7 text-gold" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-bold">Dokončili jste kurz!</h2>
+              <p className="text-white/70 text-sm mt-1">
+                Stáhněte si materiály a vygenerujte certifikát na své jméno.
+              </p>
+            </div>
+
+            {courseDownloads.length > 0 && (
+              <div className="space-y-2 mb-4">
+                {courseDownloads.map((dl) => (
+                  <a
+                    key={dl.id}
+                    href={dl.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 bg-white/10 rounded-xl p-3 hover:bg-white/15 transition-colors"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-gold" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="flex-1 text-sm font-medium leading-tight">{dl.title}</span>
+                    <svg className="w-4 h-4 text-white/50 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </a>
+                ))}
+              </div>
+            )}
+
+            <a
+              href={`/api/certificate/${lesson.course.id}`}
+              className="flex items-center justify-center gap-2 bg-gold text-navy px-6 py-3.5 rounded-xl font-bold hover:bg-gold-light transition-all"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Vygenerovat certifikát
+            </a>
+            <p className="text-white/50 text-xs text-center mt-2">
+              Certifikát se vytvoří na jméno uvedené ve vašem účtu.
+            </p>
           </div>
         )}
 
