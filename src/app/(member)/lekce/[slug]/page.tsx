@@ -162,11 +162,11 @@ export default async function LessonPage({ params }: Props) {
           )}
         </div>
 
-        {/* Rychlé pokračování na další lekci */}
+        {/* Rychlé pokračování na další lekci – pouze mobil (desktop má navigaci pod videem) */}
         {canAccess && nextLesson && (
           <Link
             href={`/lekce/${nextLesson.slug}`}
-            className="flex items-center justify-between gap-3 bg-navy text-white rounded-2xl p-4 shadow-sm active:opacity-90 hover:bg-navy-light transition-all"
+            className="lg:hidden flex items-center justify-between gap-3 bg-navy text-white rounded-2xl p-4 shadow-sm active:opacity-90 hover:bg-navy-light transition-all"
           >
             <span className="min-w-0">
               <span className="block text-xs text-white/60">Pokračovat na další lekci</span>
@@ -274,41 +274,21 @@ export default async function LessonPage({ params }: Props) {
           courseTitle={lesson.course.title}
         />
 
-        {/* Navigace předchozí/další – pouze mobil */}
-        <div className="lg:hidden grid grid-cols-2 gap-3 pb-6">
-          {prevLesson ? (
-            <Link
-              href={`/lekce/${prevLesson.slug}`}
-              className="flex flex-col items-start gap-1 p-4 rounded-2xl border border-gray-200 bg-white active:bg-gray-50 transition-all"
-            >
-              <span className="text-xs text-gray-400 flex items-center gap-1">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Předchozí
-              </span>
-              <span className="text-sm font-medium text-gray-800 leading-tight line-clamp-2">{prevLesson.title}</span>
-            </Link>
-          ) : (
-            <div />
-          )}
-          {nextLesson ? (
-            <Link
-              href={`/lekce/${nextLesson.slug}`}
-              className="flex flex-col items-end gap-1 p-4 rounded-2xl bg-navy text-white active:opacity-90 transition-all col-start-2"
-            >
-              <span className="text-xs text-white/60 flex items-center gap-1">
-                Další
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </span>
-              <span className="text-sm font-medium leading-tight line-clamp-2 text-right">{nextLesson.title}</span>
-            </Link>
-          ) : (
-            <div />
-          )}
-        </div>
+        {/* Zpět na předchozí lekci – pouze mobil (další lekce je nahoře pod videem) */}
+        {prevLesson && (
+          <Link
+            href={`/lekce/${prevLesson.slug}`}
+            className="lg:hidden flex items-center gap-3 p-4 rounded-2xl border border-gray-200 bg-white active:bg-gray-50 transition-all mb-6"
+          >
+            <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="min-w-0">
+              <span className="block text-xs text-gray-400">Předchozí lekce</span>
+              <span className="block text-sm font-medium text-gray-800 leading-tight line-clamp-1">{prevLesson.title}</span>
+            </span>
+          </Link>
+        )}
       </div>
     </div>
   );

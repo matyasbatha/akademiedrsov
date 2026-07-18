@@ -17,7 +17,7 @@ interface Props {
 }
 
 export default function LessonListCollapsible({ lessons, currentSlug, courseTitle }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const currentIndex = lessons.findIndex((l) => l.slug === currentSlug);
 
   return (
